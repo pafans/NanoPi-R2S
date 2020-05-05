@@ -23,8 +23,6 @@ jobs:
         uses: actions/checkout@master
         with:
           ref: master
-          fetch-depth: 0
-          token: ${{ env.sec_token }}
 
       - name: Init Env
         env:
