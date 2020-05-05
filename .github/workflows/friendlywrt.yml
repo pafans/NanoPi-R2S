@@ -94,21 +94,18 @@ jobs:
           # mv $kernelconfig kernel/arch/arm64/configs/nanopi-r2_linux_defconfig
           # rm fanck.zip
           
-      #- name: Change Log
-      #  id: changelog
-      #  run: |
-      #    git config --global user.email "action@github.com" && git config --global user.name "GitHub Action"
-      #    ./changelog.sh FriendlyWRT
+      - name: Change default IP
+        run: |
+          cd friendlywrt-rk3328/friendlywrt
+          sed -i 's/192.168.2.1/192.168.0.254/g' ./package/base-files/files/bin/config_generate
 
       - name: Update Feeds
-        if: steps.changelog.outputs.changelog != ''
         run: |
           cd friendlywrt-rk3328/friendlywrt
           ./scripts/feeds update -a
           ./scripts/feeds install -a
         
       - name: Install Mods
-        if: steps.changelog.outputs.changelog != ''
         run: |
           cd friendlywrt-rk3328
           sed -i '/Load Average/i\\t\t<tr><td width="33%"><%:CPU Temperature%></td><td><%=luci.sys.exec("cut -c1-2 /sys/class/thermal/thermal_zone0/temp")%> ℃</td></tr>' friendlywrt/feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm
@@ -121,7 +118,6 @@ jobs:
           cp ../scripts/rom_prepare.sh friendlywrt/package/base-files/files/usr/bin/rom_prepare
 
       - name: Add Temperature to Netdata
-        if: steps.changelog.outputs.changelog != ''
         run: |
           cd friendlywrt-rk3328
           mkdir -p friendlywrt/package/base-files/files/usr/lib/netdata/charts.d
@@ -142,7 +138,6 @@ jobs:
           echo "grep -qF 'songchenwen.com' /etc/opkg/customfeeds.conf || echo 'src/gz songchenwen https://songchenwen.com/nanopi-r2s-opkg-feeds/packages' >> /etc/opkg/customfeeds.conf" >> friendlywrt/package/base-files/files/root/setup.sh
 
       - name: Download Clash Binary
-        if: steps.changelog.outputs.changelog != ''
         run: |
           CLASH_VERSION=v0.19.0
           mkdir -p friendlywrt-rk3328/friendlywrt/package/base-files/files/usr/bin
@@ -156,19 +151,16 @@ jobs:
           wget -O Country.mmdb https://github.com/Dreamacro/maxmind-geoip/releases/latest/download/Country.mmdb
 
       - name: Install UPX
-        if: steps.changelog.outputs.changelog != ''
         run: |
           mkdir -p friendlywrt-rk3328/friendlywrt/staging_dir/host/bin/
           ln -s /usr/bin/upx-ucl friendlywrt-rk3328/friendlywrt/staging_dir/host/bin/upx
   
       - name: Update Target.mk
-        if: steps.changelog.outputs.changelog != ''
         run: |
           cd friendlywrt-rk3328/friendlywrt/include
           sed -i 's/dnsmasq /dnsmasq-full default-settings luci /' target.mk
 
       - name: Build Config
-        if: steps.changelog.outputs.changelog != ''
         run: |
           cd friendlywrt-rk3328
           cat configs/config_rk3328 | grep "TARGET" > ../rk3328.config
@@ -177,7 +169,6 @@ jobs:
           cat configs/config_rk3328
       
       - name: Clean src
-        if: steps.changelog.outputs.changelog != ''
         run: |
           cd friendlywrt-rk3328
           rm -rf lede
@@ -191,7 +182,6 @@ jobs:
 
       # from https://github.com/fanck0605/nanopi_r2s/blob/lean/.github/workflows/main.yml#L87
       - name: Fix FriendlyWrt rootfs owner and group
-        if: steps.changelog.outputs.changelog != ''
         run: |
           sudo df -lh
           lodev=$(sudo losetup -f)
@@ -205,12 +195,10 @@ jobs:
           sudo losetup -d $lodev
       
       - name: Zip Files
-        if: steps.changelog.outputs.changelog != ''
         run: |
           gzip friendlywrt-rk3328/out/*.img
 
       - name: Assemble Artifact
-        if: steps.changelog.outputs.changelog != ''
         id: assemble_artifact
         run: |
           rm -rf ./artifact/
