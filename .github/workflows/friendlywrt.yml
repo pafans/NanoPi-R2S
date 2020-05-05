@@ -128,7 +128,6 @@ jobs:
           echo "/etc/init.d/netdata restart" >> friendlywrt/package/base-files/files/root/setup.sh
       
       - name: Add OPKG Feeds
-        if: steps.changelog.outputs.changelog != ''
         run: |
           cd friendlywrt-rk3328
           git clone -b src --depth 1 https://github.com/songchenwen/nanopi-r2s-opkg-feeds.git
