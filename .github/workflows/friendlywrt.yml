@@ -175,7 +175,6 @@ jobs:
           rm -rf openwrt
 
       - name: Build Friendlywrt
-        if: steps.changelog.outputs.changelog != ''
         run: |
           cd friendlywrt-rk3328
           ./build.sh nanopi_r2s.mk
@@ -199,7 +198,6 @@ jobs:
           gzip friendlywrt-rk3328/out/*.img
 
       - name: Assemble Artifact
-        id: assemble_artifact
         run: |
           rm -rf ./artifact/
           mkdir -p ./artifact/
