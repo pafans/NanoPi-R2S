@@ -2,20 +2,13 @@ name: friendlywrt
 
 
 on:
-  repository_dispatch:
-  push:
-    branches: 
-      - master
-    paths:
-      - '.github/workflows/friendlywrt.yml'
-      - 'minimal_config.seed'
-      - '*.sh'
-  schedule:
-    - cron: '0 17 * * *'
+  watch:
+    types: started
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: github.event.repository.owner.id == github.event.sender.id
     env:
       GITHUB_TOKEN: ${{ secrets.sec_token }}
       sec_token: ${{ secrets.sec_token }}
