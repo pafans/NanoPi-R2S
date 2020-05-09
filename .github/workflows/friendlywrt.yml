@@ -136,6 +136,11 @@ jobs:
           rm -rf nanopi-r2s-opkg-feeds
           echo "grep -qF 'songchenwen.com' /etc/opkg/customfeeds.conf || echo 'src/gz songchenwen https://songchenwen.com/nanopi-r2s-opkg-feeds/packages' >> /etc/opkg/customfeeds.conf" >> friendlywrt/package/base-files/files/root/setup.sh
 
+      - name: RK3328 Unlock 1.5GHz
+        run: |
+          cd friendlywrt-rk3328/kernel/
+          wget -O- https://raw.githubusercontent.com/armbian/build/master/patch/kernel/rockchip64-dev/RK3328-enable-1512mhz-opp.patch | git apply
+
       - name: Download Clash Binary
         run: |
           CLASH_VERSION=v0.19.0
